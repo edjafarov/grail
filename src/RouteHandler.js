@@ -5,7 +5,7 @@ var DocumentTitle = require('react-document-title');
 
 var isClient = typeof(window) == 'object';
 
-var stc = 0;
+
 module.exports = function createApp(options){
 	var stores = {}, router, routes;
 
@@ -22,7 +22,7 @@ module.exports = function createApp(options){
 			stores:{},
 			actions: new Emitter()
 		}
-		ctx.s = stc++;
+
 		Object.keys(stores).reduce(function(context, name){
 			context.stores[name] = initStore(ctx, stores[name]);
 			return context;
@@ -53,12 +53,19 @@ module.exports = function createApp(options){
 		}
 	}
 	
-	var appActions = require('./defaultConfig');
+	var appActions = require('./defaultConfig')();
 	
   //hang on the historyAPI
   //init actions/routeActions/stores
   //each handler render with theese stores/actions/routes
   var theApp = {
+  	flush: function(convertToString){
+  		var result =  Object.keys(ctx.stores).reduce(function(res, key){
+  			res[key] = ctx.stores[key].get();
+  			return res;
+  		}, {});
+  		return convertToString?JSON.stringify(result, null, 2):result;
+  	},
   	appActions: appActions.actionsRouter,
   	useRoutes: function(appRoutes){
   		router = ReactRouterAdapter.routerAdapter(appRoutes);

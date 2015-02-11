@@ -9,7 +9,7 @@ var sinon = require('sinon');
 var expect = require('chai').expect;
 
 
-describe('Bootstrap Grail app', function(){
+describe('Bootstrap simple Grail app', function(){
   var app = grail.createApp();
   
   var AppComp = React.createClass({
