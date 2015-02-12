@@ -2,6 +2,10 @@
 
 ##install
 
+```
+npm install grail --save
+```
+
 ##getting started
 
 Grail architecture is really simple. We use react router to handle isomorphic routing and rendering components. Additionally router triggers actions [PromisePipe](https://github.com/edjafarov/PromisePipe) that fill stores for rendered components. 
