@@ -4,9 +4,9 @@
 
 ##getting started
 
-Grail architecture is really simple. We use react router to handle isomorphic routing and rendering components. Additionally router triggers actions (PromisePipes)[https://github.com/edjafarov/PromisePipe] that fill stores for rendered components. 
+Grail architecture is really simple. We use react router to handle isomorphic routing and rendering components. Additionally router triggers actions [PromisePipe](https://github.com/edjafarov/PromisePipe) that fill stores for rendered components. 
 
-The very basic example is (here)[https://github.com/edjafarov/grailjs/tree/master/examples/basic]
+The very basic example is [here](https://github.com/edjafarov/grailjs/tree/master/examples/basic)
 
 Lets start with general app. The app will consist of two routes Home (/) and Items (/items)
 
@@ -88,7 +88,7 @@ var ItemsStore = grail.BasicStoreFactory('ItemsStore', {
 });
 
 ```
-And an action to fill the Store. As Actions we are using (PromisePipe)[https://github.com/edjafarov/PromisePipe]
+And an action to fill the Store. As Actions we are using [PromisePipe](https://github.com/edjafarov/PromisePipe)
 
 ```javascript
 var PromisePipe = require('promise-pipe');
