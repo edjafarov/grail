@@ -1,6 +1,6 @@
 module.exports = {
 	createApp: require('./RouteHandler'),
 	ContextMixin: require('./ContextMixin'),
-	chains: require('./chains'),
+	chains: require('./Chains'),
 	BasicStoreFactory: require('./BasicStoreFactory')
 }
