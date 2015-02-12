@@ -1,4 +1,6 @@
-# grail - simple React based isomorphic apps framework
+# Grail - simple React based isomorphic apps framework
+
+With Grail you will need to write frontend code only and you can use ANY backend you like. Grail plays nice with any API - java, python or ruby.
 
 ##install
 
