@@ -9,6 +9,7 @@ module.exports = {
 	      return Router.run(routes, url, cb);
 	    } else {
 	      // set up the router listener for browser
+
 	      return Router.run(routes, Router.HistoryLocation, cb);
 	    }
 	  }

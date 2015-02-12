@@ -1,0 +1,25 @@
+{
+  "name": "basic",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node node_modules/webpack/bin/webpack.js && node server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "~1.5.3",
+    "jsx-loader": "~0.12.2"
+  },
+  "dependencies": {
+    "grail": "0.0.3",
+    "promise-pipe": "0.0.1",
+    "react": "~0.12.2",
+    "react-router": "~0.11.6",
+    "express": "~4.11.2",
+    "node-jsx": "~0.12.4",
+    "es6-promise": "~2.0.1"
+  }
+}
