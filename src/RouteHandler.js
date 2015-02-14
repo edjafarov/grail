@@ -9,7 +9,8 @@ var isClient = typeof(window) == 'object';
 module.exports = function createApp(options){
 	var stores = {}, router, routes;
 
-  
+  var Html = options && options.Layout || require('./components/Layout');
+
   if(options && options.routes) {
   	router = ReactRouterAdapter.routerAdapter(options.routes);	
   	routes = options.routes;
@@ -93,8 +94,6 @@ module.exports = function createApp(options){
 		},
 		init: function appStart(){
 
-
-		  var Html = require('./components/Layout');
 
 		  var parsedRoutes = [];
 		  // parse routes for

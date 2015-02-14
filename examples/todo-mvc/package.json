@@ -1,0 +1,34 @@
+{
+  "name": "basic",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node node_modules/webpack/bin/webpack.js && node server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "~1.5.3",
+    "jsx-loader": "~0.12.2"
+  },
+  "dependencies": {
+    "grail": "*",
+    "promise-pipe": "0.0.1",
+    "react": "~0.12.2",
+    "react-router": "~0.11.6",
+    "express": "~4.11.2",
+    "node-jsx": "~0.12.4",
+    "es6-promise": "~2.0.1",
+    "todomvc-app-css": "^1.0.0",
+    "todomvc-common": "^1.0.1",
+    "style-loader": "~0.8.3",
+    "css-loader": "~0.9.1",
+    "webpack": "~1.5.3",
+    "extract-text-webpack-plugin": "~0.3.8",
+    "cookie-session": "~1.1.0",
+    "body-parser": "~1.11.0",
+    "superagent": "~0.21.0"
+  }
+}
