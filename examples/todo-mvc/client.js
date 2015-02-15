@@ -33,26 +33,50 @@ var ItemsComp = React.createClass({
       if(!this.isMounted()) return;
       this.setState({items: items});
     },
+    changeItem: function(item, evt){
+      item.title = event.target.value;
+      this.context.doAction('items:item:change', item);
+      this.setState({editable: null});
+    },
+    handleKeyDown: function(item, evt){
+      if (evt.which === 27) {
+        this.setState({editable: null});
+      } else if (evt.which === 13) {
+        this.changeItem(item, evt);
+        this.setState({editable: null});
+      }
+    },
     toggle: function(item){
       this.context.doAction('items:item:toggle', {id: item.id});
     },
     delete: function(item){
       this.context.doAction('items:item:delete', {id: item.id});
     },
-    edit: function(item){
-
+    edit: function(i){
+      this.setState({editable: i}, function(){
+        var node = this.refs["ref" + i].getDOMNode();
+        node.focus();
+        node.setSelectionRange(node.value.length, node.value.length);
+      }.bind(this));
     },
   	render: function () {
 	    return (
       <ul id="todo-list">
-        {this.state.items && this.state.items.map(function(item){
-          return <li>
+        {this.state.items && this.state.items.map(function(item, i){
+          var className = [item.completed?'completed':''
+                          ,this.state.editable == i?'editing':''].join(' ');
+          var inputRef = "ref" + i;                          
+          return <li className={className}>
             <div className="view">
               <input className="toggle" type="checkbox" checked={item.completed} onChange={this.toggle.bind(this, item)}/>
-              <label onDoubleClick={this.edit}>{item.title}</label>
+              <label onDoubleClick={this.edit.bind(this, i)}>{item.title}</label>
               <button className="destroy" onClick={this.delete.bind(this, item)}></button>
             </div>
-            <input className="edit" defaultValue={item.title}  />
+            <input className="edit" 
+              ref={inputRef}
+              defaultValue={item.title}  
+              onBlur={this.changeItem.bind(this, item)}
+              onKeyDown={this.handleKeyDown.bind(this, item)}/>
           </li>
         }.bind(this))}
       </ul>
@@ -76,19 +100,32 @@ app.appActions.create('items:toggleAll')
 
 app.appActions.create('items:item:toggle')
 .put('/api/items/:id/toggle')
-.emit('items:item:changed');
+.emit('items:item:toggle');
 
 app.appActions.create('items:item:delete')
 .del('/api/items/:id')
 .emit('items:item:remove');
+
+app.appActions.create('items:item:change')
+.put('/api/items/:id')
+.emit('items:item:changed');
 
 var AppComp = React.createClass({
   mixins: [React.addons.LinkedStateMixin, grail.ContextMixin],
   getInitialState: function(){
     return {
       newItem:'',
-      allToggled: false
+      info: this.context.stores.ItemsStore.getInfo()
     }
+  },
+  componentDidMount: function() {
+    //listen to ItemsStore changes
+    this.context.stores.ItemsStore.on('info', this.change);
+  },
+  change: function(info){
+    //set state only if mounted
+    if(!this.isMounted()) return;
+    this.setState({info: info});    
   },
   toggleAll: function(){
     this.context.doAction('items:toggleAll', {completed: !this.state.allToggled});
@@ -109,7 +146,7 @@ var AppComp = React.createClass({
                   autofocus={true} onKeyUp={this.createNewItem}/>
           </header>
           <section id="main">
-            <input id="toggle-all" type="checkbox" checked={this.state.allToggled} onChange={this.toggleAll}/>
+            <input id="toggle-all" type="checkbox" checked={this.state.info.isAllCompleted} onChange={this.toggleAll}/>
             <label htmlFor="toggle-all">Mark all as complete</label>
             <RouteHandler/>
           </section>
@@ -132,6 +169,7 @@ var ItemsStore = grail.BasicStoreFactory('ItemsStore', {
     context.actions.on('items:got', this.gotItems.bind(this));
     context.actions.on('items:filter', this.gotItemsFilter.bind(this));
     context.actions.on('items:item:added', this.itemAdded.bind(this));
+    context.actions.on('items:item:toggle', this.itemChanged.bind(this));
     context.actions.on('items:item:changed', this.itemChanged.bind(this));
     context.actions.on('items:item:remove', this.itemRemoved.bind(this));
   },
@@ -174,12 +212,20 @@ var ItemsStore = grail.BasicStoreFactory('ItemsStore', {
   },
   change: function(){
     if(!this.items) return
-    this.emit('info', this.items.length);
+    this.emit('info', {count: this.items.length, isAllCompleted: this.allCompleted.call(this)});
     this.emit('change', this.getFilteredItems.call(this));
+  },
+  allCompleted: function(){
+    return this.items.reduce(function(res, item){
+      return !item.completed?false:res;
+    }, true);
   },
   get: function(){
     return this.getFilteredItems.call(this);
-  }
+  },
+  getInfo: function(){
+    return {count: this.items.length, isAllCompleted: this.allCompleted.call(this)};
+  } 
 });
 
 
