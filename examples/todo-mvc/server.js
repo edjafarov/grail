@@ -53,6 +53,15 @@ app.put("/api/items/toggle", function(req, res){
 	});
 	res.json(req.session.items);
 })
+app.delete("/api/items/clean", function(req, res){
+	if(!req.session.items) req.session.items = [];
+	req.session.items = req.session.items.reduce(function(items, item){
+		if(!item.completed) items.push(item);
+		return items;
+	},[]);
+	res.json(req.session.items);
+})
+
 
 app.put("/api/items/:id/toggle", function(req, res){
 	var newItem = req.session.items[req.params.id];

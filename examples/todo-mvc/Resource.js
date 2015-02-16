@@ -118,7 +118,7 @@ module.exports.put = function put(data, context, url, body, query){
 
 module.exports.del = function del(data, context, url, query){
 	return new Promise(function(resolve, reject){
-		var req = resource.del(prepreUrl.call({params: data}, url));
+		var req = resource.del(data?prepreUrl.call({params: data}, url):url);
 		if(context.request && context.request.headers){
 			req.set(context.request.headers);
 		}

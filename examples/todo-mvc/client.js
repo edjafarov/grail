@@ -98,6 +98,11 @@ app.appActions.create('items:toggleAll')
 .put('/api/items/toggle')
 .emit('items:got');
 
+app.appActions.create('items:clean')
+.del('/api/items/clean')
+.emit('items:got');
+
+
 app.appActions.create('items:item:toggle')
 .put('/api/items/:id/toggle')
 .emit('items:item:toggle');
@@ -136,7 +141,20 @@ var AppComp = React.createClass({
     this.context.doAction('items:add', this.state.newItem);
     this.setState({newItem:''});
   },
+  clean: function(){
+    this.context.doAction('items:clean');
+  },
   render: function () {
+    var clearButton;
+    if (this.state.info&&this.state.info.completedCount > 0) {
+      clearButton = (
+        <button
+          id="clear-completed"
+          onClick={this.clean}>
+          Clear completed ({this.state.info.completedCount})
+        </button>
+      );
+    }    
     return (
       <div>
         <section id="todoapp">
@@ -150,7 +168,27 @@ var AppComp = React.createClass({
             <label htmlFor="toggle-all">Mark all as complete</label>
             <RouteHandler/>
           </section>
-        </section>  
+          <footer id="footer">
+            <span id="todo-count">
+              <strong>{this.state.info.countItemsLeft}</strong>  left
+            </span>
+            <ul id="filters">
+              <li>
+                <Link to="home">All</Link>
+              </li>
+              {' '}
+              <li>
+                <Link to="active">Active</Link>
+              </li>
+              {' '}
+              <li>
+                <Link to="completed">Completed</Link>
+              </li>
+            </ul>
+            {clearButton}
+          </footer>  
+        </section>
+              
         <div id="info">
           <p>Double-click to edit a todo</p>
           <p>Written by <a href="https://github.com/addyosmani">Addy Osmani</a></p>
@@ -212,25 +250,31 @@ var ItemsStore = grail.BasicStoreFactory('ItemsStore', {
   },
   change: function(){
     if(!this.items) return
-    this.emit('info', {count: this.items.length, isAllCompleted: this.allCompleted.call(this)});
+    this.emit('info', this.getInfo.call(this));
     this.emit('change', this.getFilteredItems.call(this));
   },
-  allCompleted: function(){
+  countItemsLeft: function(){
     return this.items.reduce(function(res, item){
-      return !item.completed?false:res;
-    }, true);
-  },
+      return item.completed?res:++res;
+    }, 0);
+  },  
   get: function(){
     return this.getFilteredItems.call(this);
   },
   getInfo: function(){
-    return {count: this.items.length, isAllCompleted: this.allCompleted.call(this)};
+    var itemsLeft = this.countItemsLeft.call(this);
+    return {
+      count: this.items.length, 
+      isAllCompleted: itemsLeft == 0,
+      countItemsLeft: itemsLeft,
+      completedCount: this.items.length - itemsLeft
+    };
   } 
 });
 
 
-PromisePipe.use('emit', function emit(data, context, eventName){
-	context.emit(eventName, data);
+PromisePipe.use('emit', function emit(data, context, eventName, override){
+	context.emit(eventName, override || data);
 	return data;
 });
 
@@ -253,7 +297,7 @@ var getCompleted = PromisePipe()
 
 
 
-var routes = <Route path="/" name="home" handler={AppComp} stores={ItemsStore}>
+var routes = <Route path="/" name="home" handler={AppComp} stores={ItemsStore} ignoreScrollBehavior>
     <Route name="active" path="active" handler = {ItemsComp} action={getActive} />
     <Route name="completed" path="completed" handler = {ItemsComp} action={getCompleted}/>
     <DefaultRoute handler = {ItemsComp} action={getItems} />
