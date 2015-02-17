@@ -1,7 +1,7 @@
 var grail = require('grail');
 
 module.exports = grail.BasicStoreFactory('ItemsStore', {
-  items: null,
+  items: [],
   when: {},
   init: function(context){
     context.actions.on('items:got', this.gotItems.bind(this));
