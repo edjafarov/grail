@@ -5,7 +5,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 module.exports = {
   // Entry point for static analyzer:
   entry: [
-    './client.js'
+    './src/client.js'
   ],
 
   output: {

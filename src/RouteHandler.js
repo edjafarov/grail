@@ -53,7 +53,7 @@ module.exports = function createApp(options){
 			cb.call(state, Handler, state);
 		}
 	}
-	
+	// TODO: expose real AppActions and ActionsRouter
 	var appActions = require('./defaultConfig')();
 	
   //hang on the historyAPI
@@ -67,7 +67,8 @@ module.exports = function createApp(options){
   		}, {});
   		return convertToString?JSON.stringify(result, null, 2):result;
   	},
-  	appActions: appActions.actionsRouter,
+  	appActions: appActions,
+  	actions: appActions.actionsRouter,
   	useRoutes: function(appRoutes){
   		router = ReactRouterAdapter.routerAdapter(appRoutes);
   		routes = appRoutes;

@@ -10,17 +10,20 @@ var RouteHandler = Router.RouteHandler;
 require('./config');
 
 var app = grail.createApp({Layout: require("./Layout")});
+var actions = require('./actions'); 
+actions(app.actions)//add actions
+var ItemsStore = require('./ItemsStore');
 
-require("./node_modules/todomvc-common/base.css");
-require("./node_modules/todomvc-app-css/index.css");
+require("../node_modules/todomvc-common/base.css");
+require("../node_modules/todomvc-app-css/index.css");
 
-//render Items component
+//Items component
 var ItemsComp = React.createClass({
     mixins: [grail.ContextMixin],
     getInitialState: function(){
     	//get initial data from ItemsStore
       return {
-        items: this.context.stores.ItemsStore.get(),
+        items: this.context.stores.ItemsStore.get(), //items list
         editable: null
       }
     },
@@ -46,13 +49,13 @@ var ItemsComp = React.createClass({
         this.setState({editable: null});
       }
     },
-    toggle: function(item){
+    toggle: function(item){ //toggle item
       this.context.doAction('items:item:toggle', {id: item.id});
     },
-    delete: function(item){
+    delete: function(item){ // delete item
       this.context.doAction('items:item:delete', {id: item.id});
     },
-    edit: function(i){
+    edit: function(i){ 
       this.setState({editable: i}, function(){
         var node = this.refs["ref" + i].getDOMNode();
         node.focus();
@@ -84,37 +87,7 @@ var ItemsComp = React.createClass({
   }
 });
 
-app.appActions.create('items:add')
-.then(function prepare(title){
-  return {
-    title: title,
-    completed: false
-  }
-})
-.post('/api/items')
-.emit('items:item:added');
-
-app.appActions.create('items:toggleAll')
-.put('/api/items/toggle')
-.emit('items:got');
-
-app.appActions.create('items:clean')
-.del('/api/items/clean')
-.emit('items:got');
-
-
-app.appActions.create('items:item:toggle')
-.put('/api/items/:id/toggle')
-.emit('items:item:toggle');
-
-app.appActions.create('items:item:delete')
-.del('/api/items/:id')
-.emit('items:item:remove');
-
-app.appActions.create('items:item:change')
-.put('/api/items/:id')
-.emit('items:item:changed');
-
+//App component
 var AppComp = React.createClass({
   mixins: [React.addons.LinkedStateMixin, grail.ContextMixin],
   getInitialState: function(){
@@ -170,7 +143,7 @@ var AppComp = React.createClass({
           </section>
           <footer id="footer">
             <span id="todo-count">
-              <strong>{this.state.info.countItemsLeft}</strong>  left
+              <strong>{this.state.info.countItemsLeft}</strong> left
             </span>
             <ul id="filters">
               <li>
@@ -200,107 +173,14 @@ var AppComp = React.createClass({
 });
 
 
-var ItemsStore = grail.BasicStoreFactory('ItemsStore', {
-  items: null,
-  when: {},
-  init: function(context){
-    context.actions.on('items:got', this.gotItems.bind(this));
-    context.actions.on('items:filter', this.gotItemsFilter.bind(this));
-    context.actions.on('items:item:added', this.itemAdded.bind(this));
-    context.actions.on('items:item:toggle', this.itemChanged.bind(this));
-    context.actions.on('items:item:changed', this.itemChanged.bind(this));
-    context.actions.on('items:item:remove', this.itemRemoved.bind(this));
-  },
-  itemRemoved: function(Item){
-    this.items = this.items.reduce(function(items, item){
-      if(item.id != Item.id) items.push(item);
-      return items;
-    },[]);
-    this.change.call(this);
-  },  
-  itemChanged: function(Item){
-    this.items.forEach(function(item, i){
-      if(item.id == Item.id){
-        this.items[i] = Item;
-      }
-    }.bind(this))
-    this.change.call(this);
-  },
-  itemAdded: function(Item){
-    this.items.push(Item);
-    this.change.call(this);
-  },
-  gotItemsFilter: function(when){
-    this.when = when || {};
-  },
-  getFilteredItems: function(){
-    var when = this.when;
-    return this.items.reduce(function(items, item){
-      var pass = true;
-      Object.keys(when).forEach(function(keyName){
-        if(item[keyName] != when[keyName]) pass = false;
-      })
-      if(pass) items.push(item);
-      return items;
-    }, []);
-  },
-  gotItems: function(items){
-    this.items = items;   
-    this.change.call(this);
-  },
-  change: function(){
-    if(!this.items) return
-    this.emit('info', this.getInfo.call(this));
-    this.emit('change', this.getFilteredItems.call(this));
-  },
-  countItemsLeft: function(){
-    return this.items.reduce(function(res, item){
-      return item.completed?res:++res;
-    }, 0);
-  },  
-  get: function(){
-    return this.getFilteredItems.call(this);
-  },
-  getInfo: function(){
-    var itemsLeft = this.countItemsLeft.call(this);
-    return {
-      count: this.items.length, 
-      isAllCompleted: itemsLeft == 0,
-      countItemsLeft: itemsLeft,
-      completedCount: this.items.length - itemsLeft
-    };
-  } 
-});
-
-
-PromisePipe.use('emit', function emit(data, context, eventName, override){
-	context.emit(eventName, override || data);
-	return data;
-});
-
-
-//The Action for /items path. Is taking data from async source data
-var getItems = PromisePipe()
-.emit('items:filter', {})
-.get('/api/items')
-.emit('items:got');
-
-var getActive = PromisePipe()
-.emit('items:filter', {completed: false})
-.get('/api/items')
-.emit('items:got');
-
-var getCompleted = PromisePipe()
-.emit('items:filter', {completed: true})
-.get('/api/items')
-.emit('items:got');
-
-
-
+//The routes
+// home
+// - active
+// - completed
 var routes = <Route path="/" name="home" handler={AppComp} stores={ItemsStore} ignoreScrollBehavior>
-    <Route name="active" path="active" handler = {ItemsComp} action={getActive} />
-    <Route name="completed" path="completed" handler = {ItemsComp} action={getCompleted}/>
-    <DefaultRoute handler = {ItemsComp} action={getItems} />
+    <Route name="active" path="active" handler = {ItemsComp} action={actions.getActive} />
+    <Route name="completed" path="completed" handler = {ItemsComp} action={actions.getCompleted}/>
+    <DefaultRoute handler = {ItemsComp} action={actions.getItems} />
   </Route>
 
 

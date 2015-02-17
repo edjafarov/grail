@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-var clientAppMiddleware = require("./client").middleware;
+var clientAppMiddleware = require("./src/client").middleware;
 
 
 
@@ -53,6 +53,7 @@ app.put("/api/items/toggle", function(req, res){
 	});
 	res.json(req.session.items);
 })
+
 app.delete("/api/items/clean", function(req, res){
 	if(!req.session.items) req.session.items = [];
 	req.session.items = req.session.items.reduce(function(items, item){

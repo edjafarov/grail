@@ -1,5 +1,5 @@
 var PromisePipe = require('promise-pipe');
-var Resource = require('./Resource');
+var Resource = require('../Resource');
 
 PromisePipe.use('get', Resource.get);
 PromisePipe.use('del', Resource.del);
