@@ -149,6 +149,7 @@ module.exports = function createApp(options){
 		  }
 
 		  return {
+		  	app: theApp,
 		  	middleware: function(req, res, next){
 			    // render as HTML
 			    theApp.renderUrl(req, appHandler(function(err){

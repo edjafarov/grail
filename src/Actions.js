@@ -18,7 +18,7 @@ module.exports = function(){
 				if(!context) throw new Error("Context required for action");
 				context.emit = context.actions.emit.bind(context.actions);
 				context.actionName = name;
-				ActionPipe.call(context, data, context);
+				return ActionPipe.call(context, data, context);
 			}
 		},
 		withContext: {
@@ -28,7 +28,7 @@ module.exports = function(){
 					doAction: function(){
 						var arg = [].slice.call(arguments);
 						arg[2] = context;
-						that.doAction.apply(that, arg);
+						return that.doAction.apply(that, arg);
 					}
 				}
 			}
