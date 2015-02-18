@@ -110,7 +110,7 @@ var AppComp = React.createClass({
     this.setState({allToggled: !this.state.allToggled});
   },
   createNewItem: function(evt){
-    if (evt.which !== 13 && this.state.newItem) return;
+    if (evt.which !== 13 || !this.state.newItem) return;
     this.context.doAction('items:add', this.state.newItem);
     this.setState({newItem:''});
   },
@@ -164,8 +164,8 @@ var AppComp = React.createClass({
               
         <div id="info">
           <p>Double-click to edit a todo</p>
-          <p>Written by <a href="https://github.com/addyosmani">Addy Osmani</a></p>
-          <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+          <p>Written by <a href="https://github.com/edjafarov">Eldar Djafarov</a></p>
+          <p><a href="https://github.com/edjafarov/grailjs/tree/master/examples/todo-mvc">Grail based TodoApp</a> is a part of <a href="http://todomvc.com">TodoMVC</a></p>
         </div>
       </div>    
     );

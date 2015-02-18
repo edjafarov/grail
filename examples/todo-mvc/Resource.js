@@ -8,7 +8,7 @@ function prepreUrl(url){
 	return Object.keys(this.params).reduce(function(urlString, name){
 
 		urlString = urlString.replace(new RegExp("\\/(:" + name + ")(\\/|$)","g"), ["/", this.params[name], "/"].join(""));
-		console.log(urlString, name, this.params[name]);
+
 		urlString = urlString.replace(/\/$/, "");
 		return urlString;
 	}.bind(this), url);
