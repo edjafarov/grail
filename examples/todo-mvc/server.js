@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var compression = require('compression');
 var bodyParser = require('body-parser')
 var session = require('cookie-session');
 require.extensions['.css'] = function(){
@@ -8,7 +9,7 @@ require.extensions['.css'] = function(){
 require('node-jsx').install({harmony: true, extension: '.js'})
 
 process.env.HOSTNAME = "http://localhost:3000"
-
+app.use(compression({level:9}));
 app.use(express.static(__dirname + '/dist'));
 app.use(session({
   keys: ['key1', 'key2']

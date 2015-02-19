@@ -36,4 +36,5 @@ module.exports = {
     ]
   },
   devtool: "#inline-source-map",
+  debug: true
 };

@@ -21,18 +21,18 @@ require("../node_modules/todomvc-app-css/index.css");
 var ItemsComp = React.createClass({
     mixins: [grail.ContextMixin],
     getInitialState: function(){
-    	//get initial data from ItemsStore
+      //get initial data from ItemsStore
       return {
         items: this.context.stores.ItemsStore.get(), //items list
         editable: null
       }
     },
     componentDidMount: function() {
-    	//listen to ItemsStore changes
+      //listen to ItemsStore changes
       this.context.stores.ItemsStore.on('change', this.change);
     },
     change: function(items){
-    	//set state only if mounted
+      //set state only if mounted
       if(!this.isMounted()) return;
       this.setState({items: items});
     },
@@ -62,8 +62,8 @@ var ItemsComp = React.createClass({
         node.setSelectionRange(node.value.length, node.value.length);
       }.bind(this));
     },
-  	render: function () {
-	    return (
+    render: function () {
+      return (
       <ul id="todo-list">
         {this.state.items && this.state.items.map(function(item, i){
           var className = [item.completed?'completed':''
