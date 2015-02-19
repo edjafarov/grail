@@ -1,5 +1,7 @@
 # Grail - simple React based isomorphic apps framework
 
+[![Join the chat at https://gitter.im/edjafarov/grailjs](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/edjafarov/grailjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 With Grail you will need to write frontend code only and you can use ANY backend you like. Grail plays nice with any API - java, python or ruby.
 
 ##install
