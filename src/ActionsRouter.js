@@ -1,5 +1,5 @@
 var Promise = require('es6-promise').Promise;
-var PromisePiper = require('promise-pipe');
+var PromisePipe = require('promise-pipe')();
 
 
 function getRouter(){
@@ -14,9 +14,10 @@ function getRouter(){
     var result = promises.length>0?Promise.all(promises):Promise.resolve(data);
     return result;
   }
-
+  actionsRouter.PromisePipe = PromisePipe;
   actionsRouter.create = function(name, pipe){
-    routes[name] = pipe || PromisePiper();
+    if(!name) return PromisePipe();
+    routes[name] = pipe || PromisePipe();
     return routes[name];
   }
 

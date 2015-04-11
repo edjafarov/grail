@@ -31,10 +31,10 @@ describe('Bootstrap simple Grail app', function(){
   });
   var rootSpy = sinon.spy();
   var nestedSpy = sinon.spy();
-  var rootAction = PromisePipe().then(function(){
+  var rootAction = app.actions.PromisePipe().then(function(){
     rootSpy.apply(this, arguments)
   })
-  var nestedAction = PromisePipe().then(function(){
+  var nestedAction = app.actions.PromisePipe().then(function(){
     nestedSpy.apply(this, arguments)
   })
 

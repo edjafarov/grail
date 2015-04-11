@@ -121,8 +121,21 @@ module.exports = function createApp(options){
 		      state.$render = function(){
 		        state.routeAction = false;
 		        var doAction = appActions.withContext(state).doAction;
-		        React.withContext({doAction:doAction, stores: state.stores},
-		          renderStuff.bind({Handler:Handler, stores: state.stores}));
+
+						var wrappedHandler = React.createClass({
+							childContextTypes: {
+								doAction: React.PropTypes.func.isRequired,
+								stores: React.PropTypes.object.isRequired
+							},
+					    getChildContext: function() {
+					      return {doAction:doAction, stores: state.stores};
+					    },
+					    render: function(){
+					    	return React.createFactory(Handler)();
+					    }
+						});
+
+						renderStuff.call({Handler:React.createFactory(wrappedHandler), stores: state.stores});
 		      }
 		      //get matched path's
 		      var urlsMatched = []

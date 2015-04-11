@@ -52,15 +52,15 @@ describe('Bootstrap Grail app with stores', function(){
     render: function () {
       return (
           React.createElement("div", {className: "items"}, 
-            this.state.items.map(function(item){
+            this.state.items.map(function(item, i){
               return React.createElement("div", null, item)
             })
           )
         );
     }
   });
-  var rootAction = PromisePipe();
-  var nestedAction = PromisePipe().then(function(data, context){
+  var rootAction = app.actions.PromisePipe();
+  var nestedAction =  app.actions.PromisePipe().then(function(data, context){
     context.emit('got:items', [1,2,3]);
     return data;
   });

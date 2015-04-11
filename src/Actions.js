@@ -1,4 +1,3 @@
-var PromisePiper = require("promise-pipe");
 var ActionsRouter = require("./ActionsRouter");
 var Emitter = require('events').EventEmitter;
 
@@ -10,7 +9,7 @@ var ActionsEmitter = new Emitter();
 module.exports = function(){
 
 	var doSpecificAction = ActionsRouter();
-	var ActionPipe = PromisePiper();
+	var ActionPipe = doSpecificAction.PromisePipe();
 
 	var actionObject = Object.create(new Emitter(), {
 		doAction: {
@@ -42,20 +41,4 @@ module.exports = function(){
 	});
 	return actionObject;
 }
-
-/*				var newContext = Object.keys(context).reduce(function(newContext, key){
-					newContext[key].value = context[key];
-					return newContext;
-				}, {})
-				var emitter = new Emitter();
-				context.emit = emitter.emit.bind(emitter);
-				context.on = emitter.on.bind(emitter);
-				///context = Object.create(new Emitter(), newContext);
-		
-				if(this.context){
-					context = Object.keys(this.context).reduce(function(ctx, name){
-						ctx[name] = this.context[name];
-						return ctx;
-					}.bind(this), context)
-				}
-*/						
+					
