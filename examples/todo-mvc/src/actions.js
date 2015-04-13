@@ -1,4 +1,4 @@
-var PromisePipe = require('promise-pipe');
+
 
 module.exports = function(appActions){
   appActions.create('items:add')
@@ -31,20 +31,21 @@ module.exports = function(appActions){
   appActions.create('items:item:change')
   .put('/api/items/:id')
   .emit('items:item:changed');
+
+  //The Action for /items path. Is taking data from async source data
+  module.exports.getItems = appActions.create()
+  .emit('items:filter', {})
+  .get('/api/items')
+  .emit('items:got');
+
+  module.exports.getActive = appActions.create()
+  .emit('items:filter', {completed: false})
+  .get('/api/items')
+  .emit('items:got');
+
+  module.exports.getCompleted = appActions.create()
+  .emit('items:filter', {completed: true})
+  .get('/api/items')
+  .emit('items:got');
 }
 
-//The Action for /items path. Is taking data from async source data
-module.exports.getItems = PromisePipe()
-.emit('items:filter', {})
-.get('/api/items')
-.emit('items:got');
-
-module.exports.getActive = PromisePipe()
-.emit('items:filter', {completed: false})
-.get('/api/items')
-.emit('items:got');
-
-module.exports.getCompleted = PromisePipe()
-.emit('items:filter', {completed: true})
-.get('/api/items')
-.emit('items:got');

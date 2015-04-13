@@ -31,10 +31,12 @@ app.get("/api/items", function(req, res){
 });
 
 app.post("/api/items", function(req, res){
+
 	if(!req.session.items) req.session.items = [];
 	var item = req.body;
 	item.id = req.session.items.length;
 	req.session.items.push(req.body);
+
 	res.json(item);
 });
 

@@ -1,15 +1,15 @@
 var grail = require('grail');
-var PromisePipe = require('promise-pipe');
-var React = require('react');
+var React = require('react/addons');
 var Promise = require('es6-promise').Promise;
 var Router = require('react-router');
 var Route = Router.Route;
 var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
-require('./config');
+
 
 var app = grail.createApp({Layout: require("./Layout")});
+require('./config')(app);
 var actions = require('./actions'); 
 actions(app.actions)//add actions
 var ItemsStore = require('./ItemsStore');

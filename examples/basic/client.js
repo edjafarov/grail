@@ -1,5 +1,4 @@
 var grail = require('grail');
-var PromisePipe = require('promise-pipe');
 var React = require('react');
 var Promise = require('es6-promise').Promise;
 var Router = require('react-router');
@@ -8,7 +7,7 @@ var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
 
 var app = grail.createApp();
-
+var PromisePipe = app.actions.PromisePipe;
 
 //render Items component
 var ItemsComp = React.createClass({

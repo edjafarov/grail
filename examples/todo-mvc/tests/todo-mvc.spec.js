@@ -3,22 +3,23 @@ process.env.HOSTNAME = "http://localhost:3000";
 require.extensions['.css'] = function(){
   return null;
 } 
+var mockery = require('mockery');
+mockery.enable({
+    warnOnReplace: false,
+    warnOnUnregistered: false
+});
 
-//var grail = require('grail');
-//var PromisePipe = require('promise-pipe');
+// inject agent to mimic browser session
+var request = require('superagent').agent();
+var Resource = require('../Resource')(request);
+
+mockery.registerMock('../Resource', function(){
+  return Resource;
+});
+
 var expect = require('chai').expect;
 var clientApp = require('../src/client');
 var app = clientApp.app;
-
-// inject agent to mimic browser session
-var request = require('superagent');
-var PromisePipe = require('promise-pipe');
-var Resource = require('../Resource')(request.agent());
-PromisePipe.use('get', Resource.get);
-PromisePipe.use('del', Resource.del);
-PromisePipe.use('post', Resource.post);
-PromisePipe.use('put', Resource.put)
-//
 
 require('../server')
 
