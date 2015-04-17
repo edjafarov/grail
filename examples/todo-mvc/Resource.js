@@ -32,7 +32,12 @@ module.exports = function(agent){
   return {
     get:function get(data, context, url, options){
       return new Promise(function(resolve, reject){
+        
         var req = resource.get(makeUrl(url, data || {}));
+
+        if(context.request && context.request.headers){
+          req.set(context.request.headers);
+        }
 
         req.on('error', function(err){
           reject(err);
@@ -42,10 +47,6 @@ module.exports = function(agent){
           resolve(res.body);
         });
 
-        if(context.request && context.request.headers){
-          req.set(context.request.headers);
-        }
-
         if(options && options.query){
           var query = options.query;
           if(typeof(options.query) == 'function'){
@@ -53,6 +54,7 @@ module.exports = function(agent){
           }
           req.query(query);
         }
+
       });
     },
     post: function post(data, context, url, options){

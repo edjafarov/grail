@@ -34,7 +34,9 @@ app.post("/api/items", function(req, res){
 
 	if(!req.session.items) req.session.items = [];
 	var item = req.body;
-	item.id = req.session.items.length;
+	var nextId = 0;
+	if(req.session.items.length) nextId = req.session.items[req.session.items.length-1].id+1
+	item.id = nextId;
 	req.session.items.push(req.body);
 
 	res.json(item);
@@ -68,20 +70,32 @@ app.delete("/api/items/clean", function(req, res){
 
 
 app.put("/api/items/:id/toggle", function(req, res){
-	var newItem = req.session.items[req.params.id];
-	newItem.completed = !newItem.completed;
-	res.json(newItem);
+	req.session.items.forEach(function(item){
+		if(item.id == +req.params.id){
+			item.completed = !item.completed;
+			res.json(item);
+		}
+	})
 })
 
 app.put("/api/items/:id", function(req, res){
 	var newItem = req.body;
 	newItem.id = req.params.id;
-	req.session.items[newItem.id] = newItem;
-	res.json(newItem);
+
+	req.session.items.forEach(function(item,i){
+		if(item.id == +req.params.id){
+			req.session.items[i] = newItem;
+			res.json(newItem);
+		}
+	})
 });
 
 app.get("/api/items/:id", function(req, res){
-	res.json(req.session.items[req.params.id]);
+	req.session.items.forEach(function(item,i){
+		if(item.id == +req.params.id){
+			res.json(req.session.items[i]);
+		}
+	})
 });
 
 app.delete("/api/items/:id", function(req, res){

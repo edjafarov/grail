@@ -26,7 +26,7 @@ function parse(routes){
 	  if(path !== undefined && comp.props.path) {
   		result.path = path + "/" + comp.props.path; 
 	  }
-		if(path !== undefined && !comp.props.path && comp.type.displayName == "DefaultRoute"){
+		if(path !== undefined && !comp.props.path && comp.type.name == "DefaultRoute"){
 			result.path = path + "/$default";
 		}
 
